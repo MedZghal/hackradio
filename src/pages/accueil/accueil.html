@@ -1,0 +1,100 @@
+<!-- -->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle color="primary">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <div ion-text class="icon-title"></div>
+      <span class="text-primary">adio<strong>Sfax</strong></span>
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button tappable (click)="presentNotifications($event)" color="primary">
+        <ion-icon name="notifications"></ion-icon>
+      </button>
+      <button ion-button tappable (click)="goToAccount()" color="primary">
+        <ion-icon name="cog"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="animated fadeIn common-bg">
+  <!--list menu on the top-->
+  <div class="booking-card">
+    <ion-grid class="card" col-md-8 col-lg-6>
+
+        <ion-col class="no-padding">
+          <ion-searchbar [(ngModel)]="hotellocation" (ionInput)="getItems($event)" (ionCancel)="showItems = !showItems" autocomplete="on" autocorrect="on" spellcheck="true" animated="true" placeholder="Recherche...."></ion-searchbar>
+          <ion-list class="searchbar-results animated fadeIn" *ngIf="showItems">
+            <button ion-item *ngFor="let item of items" tappable (click)="itemSelected(item)">
+              <ion-icon name="pin"></ion-icon>
+              {{ item }}
+            </button>
+          </ion-list>
+        </ion-col>
+
+      <ion-row style=" margin-top: 45px; ">
+        <ion-item>
+          <h2>Radio Sfax إذاعة صفاقس</h2>
+          <p>La radio régionale n°1 de la ville de Sfax</p>
+
+            <img item-end [src]="url" style="width: 45px;" tappable (click)="playStop()">
+        </ion-item>
+
+        <ion-col col-6 class="br bb datetime-btn">
+          <ion-icon name="md-calendar" item-left></ion-icon>
+          <ion-datetime class="text-primary" displayFormat="DDD, MMM, DD" pickerFormat="DD/MM/YYYY" [(ngModel)]="checkin.date"></ion-datetime>
+        </ion-col>
+
+        <ion-col col-6 class="bb datetime-btn">
+          <ion-icon name="md-calendar" item-left></ion-icon>
+          <ion-datetime class="text-primary" displayFormat="DDD, MMM, DD" pickerFormat="DD/MM/YYYY" [(ngModel)]="checkout.date"></ion-datetime>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="children > 0">
+        <ion-col col-12 class="no-paddingT no-paddingB">
+          <p ion-text color="primary" class="bold" *ngIf="children == 1">Child's age</p>
+          <p ion-text color="primary" class="bold" *ngIf="children > 1">Children's ages</p>
+        </ion-col>
+        <ion-col col-6 col-md-4 class="no-paddingT no-paddingB" *ngFor="let child of childs; let i = index">
+          <div class="guests bb">
+            <ion-item>
+              <ion-label>Child {{ i + 1 }}</ion-label>
+              <ion-select cancelText="Cancel" okText="OK">
+                <ion-option value="0" selected="true">0</ion-option>
+                <ion-option value="1">1</ion-option>
+                <ion-option value="2">2</ion-option>
+                <ion-option value="3">3</ion-option>
+                <ion-option value="4">4</ion-option>
+                <ion-option value="5">5</ion-option>
+                <ion-option value="6">6</ion-option>
+                <ion-option value="7">7</ion-option>
+                <ion-option value="8">8</ion-option>
+                <ion-option value="9">9</ion-option>
+                <ion-option value="10">10</ion-option>
+                <ion-option value="11">11</ion-option>
+                <ion-option value="12">12</ion-option>
+                <ion-option value="13">13</ion-option>
+                <ion-option value="14">14</ion-option>
+              </ion-select>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <button ion-button block color="primary" class="round" tappable (click)="interversion()">
+            <ion-icon name="search"></ion-icon>
+            Search
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+
+
+</ion-content>

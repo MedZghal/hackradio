@@ -1,0 +1,7 @@
+{
+  "name": "radioSfx",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
