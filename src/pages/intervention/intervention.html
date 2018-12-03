@@ -4,46 +4,73 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
+
 <ion-header>
-
   <ion-navbar>
-    <ion-title>intervention</ion-title>
-  </ion-navbar>
+    <button ion-button menuToggle color="primary">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <div ion-text class="icon-title"></div>
+      <span class="text-primary"><strong>Interaction</strong></span>
+    </ion-title>
+    <ion-buttons  end>
 
+      <button style="font-size: 25px;"  ion-button clear item-end large (click)="callMap($event)"><img style="    width: 25px;" src="./assets/place.png" alt="" ></button>
+      <button style="font-size: 25px;"  ion-button dark item-end (click)="takePhoto()"><img   style="   width: 25px;" src="./assets/photo-camera.png"   alt=""></button>
+      <button style="font-size: 25px;"  ion-button dark item-end (click)="playViedo()"><img   style=" margin-right: 13px;  width: 25px;    margin-left: 3px;" src="./assets/video-camera.png"   alt=""></button>
+
+
+    </ion-buttons>
+  </ion-navbar>
 </ion-header>
 
 
+
+
 <ion-content padding>
-  <ion-list>
+  <form [formGroup]="data"  method="post" enctype="multipart/*" (ngSubmit)="logForm()">
+    <ion-list>
     <ion-item>
       <ion-label color="primary" floating>Nom de l'auditeur </ion-label>
-      <ion-input></ion-input>
+      <ion-input type="text"  formControlName="Nom" ></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label color="primary" floating>Prénom de l'auditeur </ion-label>
-      <ion-input></ion-input>
+      <ion-input type="text" formControlName="prenom"></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label color="primary" floating>Description de l'intervention </ion-label>
-      <ion-textarea></ion-textarea>
-    </ion-item>
-    <ion-item>
-    <button ion-button dark item-end (click)="openCamera()"> <ion-icon name="camera"></ion-icon></button>
-    <img *ngFor="let i of Imgs" src="'data:image/jpeg;base64,' +{{i}}">
+      <ion-item>
+        <ion-label color="primary" floating> Description </ion-label>
+        <ion-textarea formControlName="description"></ion-textarea>
+      </ion-item>
 
-    </ion-item>
+    <ion-item >
 
-    <ion-item>
-      <button ion-button clear item-end large (click)="callMap($event)"><ion-icon name="locate"></ion-icon></button>
+      <ion-item *ngIf="error">
+        <strong>{{error}}</strong>
+      </ion-item>
+        <img  style="width: 40px;"  src="./assets/small-logo-sfax.png" alt="" >
+        <img  *ngFor="let im of Imgs" style="width: 40px;"  [src]="im" alt="" >
+      </ion-item>
+
+    <ion-item >
+
       <div class="col-xs-12">
 
         <ion-card>
           <ion-card-content>
-            <ion-card-title>
-              <button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>
-              <button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>
+            <ion-card-title style="margin-left: 12%;">
+              <!--<button style="width: 70px;"  *ngIf="recording">-->
+                <!--<img   src="../../assets/microphone-voice-tool-circular-black-button%20(1).png" >-->
+              <!--</button>-->
+              <!--<button style="width: 70px;"   *ngIf="!recording">-->
+                <!--<img src="../../assets/microphone-voice-tool-circular-black-button.png"  >-->
+              <!--</button>-->
+
+              <button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Arrêtez <br> l'enregistrement </button>
+              <button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Commencer <br> l'enregistrement </button>
 
             </ion-card-title>
 
@@ -58,7 +85,8 @@
       </div>
     </ion-item>
 
-
-
   </ion-list>
+    <button ion-button type="submit" block [disabled]="!data.valid">Envoie de l'intervention</button>
+  </form>
+
 </ion-content>

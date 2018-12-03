@@ -20,12 +20,14 @@ export class MapPage {
 
   constructor(public geolocation: Geolocation,public navCtrl: NavController, public navParams: NavParams) {
     let data =this.navParams.get("Data");
+    this.loadMap();
     console.log(data);
+
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MapPage');
-    this.loadMap();
+
   }
 
 

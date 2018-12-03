@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component} from '@angular/core';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {RadioServiceProvider} from "../../providers/radio-service/radio-service";
 import {InterventionPage} from "../intervention/intervention";
+import {DeduPage} from "../dedu/dedu";
 
 /**
  * Generated class for the AccueilPage page.
@@ -13,15 +14,35 @@ import {InterventionPage} from "../intervention/intervention";
 @IonicPage()
 @Component({
   selector: 'page-accueil',
-  templateUrl: 'accueil.html',
+  templateUrl: 'accueil.html'
 })
 export class AccueilPage {
+
+  items = [
+    {
+      title: ' أحلــــــى صبـــــــــاح ',
+      content: ` (9.00-6.00)  `,
+      icon: 'calendar',
+      time: { subtitle: '4/16/2013', title: '21:30' }
+    },
+    {
+      title: ' ',
+      content: `(11.00-9.00) هنا صفاقس`,
+      icon: 'calendar',
+      time: { subtitle: 'January', title: '29' }
+    },
+    {
+      title: 'Courgette daikon',
+      content: `Parsley amaranth tigernut silver beet maize .`,
+      icon: 'calendar',
+      time: { title: 'Short Text' }
+    }
+  ];
 
   click  ='pause';
   url :any ='./assets/play-button.png';
   dDate: Date = new Date();
   searchQuery: string = '';
-  items: string[];
   showItems: boolean = false;
 
   public map: any;
@@ -48,6 +69,14 @@ export class AccueilPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad AccueilPage');
+    // this.player.get('ViewAllFile').subscribe(
+    //   data => {
+    //     console.log(data);
+    //   },
+    //   err =>{
+    //
+    //   }
+    // )
   }
 
   play(Data) {
@@ -73,5 +102,9 @@ export class AccueilPage {
 
   interversion(){
     this.navCtrl.push(InterventionPage);
+  }
+
+  Deducace(){
+    this.navCtrl.push(DeduPage);
   }
 }

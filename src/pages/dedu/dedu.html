@@ -1,0 +1,81 @@
+<!--
+  Generated template for the InterventionPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle color="primary">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <div ion-text class="icon-title"></div>
+      <span class="text-primary"><strong>Interaction</strong></span>
+    </ion-title>
+    <ion-buttons style=" margin-right: 14px; " end>
+
+      <!--<button style="font-size: 25px;"  ion-button clear item-end large (click)="callMap($event)"><ion-icon name="locate"></ion-icon></button>-->
+      <!--<button style="font-size: 25px;"  ion-button dark item-end (click)="openCamera()"> <ion-icon name="camera"></ion-icon></button>-->
+      <img  style= "width: 20px; position: absolute; margin-top: 2px; margin-left: -30px; " src="./assets/place.png" item-end (click)="callMap($event)" alt="" >
+      <img style=" margin-right: 13px;     margin-left: 3px;" src="./assets/photo-camera.png" item-end (click)="openCamera()"  alt="">
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+
+
+<ion-content padding>
+  <form [formGroup]="data"  method="post" enctype="multipart/*" (ngSubmit)="logForm()">
+    <ion-list>
+      <ion-item>
+        <ion-label color="primary" floating>Nom de l'auditeur </ion-label>
+        <ion-input type="text"  formControlName="Nom" ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="primary" floating>Prénom de l'auditeur </ion-label>
+        <ion-input type="text" formControlName="prenom"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="primary" floating> Description </ion-label>
+        <ion-textarea formControlName="description"></ion-textarea>
+      </ion-item>
+      <ion-item >
+
+        <img  *ngFor="let i of data.Imgs" style="width: 200px;" src="{{i}}">
+        <img  style="width: 40px;"  src="./assets/small-logo-sfax.png" >
+
+      </ion-item>
+
+      <ion-item >
+
+        <div class="col-xs-12">
+
+          <ion-card>
+            <ion-card-content>
+              <ion-card-title>
+                <img (click)="stopRecord()" *ngIf="recording" src="./assets/microphone-voice-tool-circular-black-button (1).png" style="margin-left: 34%;width: 70px;">
+                <img (click)="startRecord()" *ngIf="!recording" src="./assets/microphone-voice-tool-circular-black-button (1).png" style="margin-left: 34%;width: 70px;"  >
+                <!--<button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>-->
+                <!--<button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>-->
+
+              </ion-card-title>
+
+            </ion-card-content>
+          </ion-card>
+          <ion-list>
+            <ion-item *ngFor="let audio of audioList; index as i;">
+              <p>{{audio.filename}}</p>
+              <button ion-button clear item-end large (click)="playAudio(audio.filename, i)"><ion-icon name="play"></ion-icon></button>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-item>
+
+    </ion-list>
+    <button ion-button type="submit" block [disabled]="!data.valid">Envoie de l'intervention</button>
+  </form>
+</ion-content>

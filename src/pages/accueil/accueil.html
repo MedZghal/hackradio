@@ -1,7 +1,7 @@
 <!-- -->
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle color="primary">
+    <button style="font-size: 20px" ion-button menuToggle color="primary">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>
@@ -9,22 +9,24 @@
       <span class="text-primary">adio<strong>Sfax</strong></span>
     </ion-title>
     <ion-buttons end>
-      <button ion-button tappable (click)="presentNotifications($event)" color="primary">
+      <button style="font-size: 20px" ion-button tappable (click)="presentNotifications($event)" color="primary">
         <ion-icon name="notifications"></ion-icon>
       </button>
-      <button ion-button tappable (click)="goToAccount()" color="primary">
-        <ion-icon name="cog"></ion-icon>
-      </button>
+      <!--<button style="font-size: 20px" ion-button tappable (click)="goToAccount()" color="primary">-->
+        <!--<ion-icon name="cog"></ion-icon>-->
+      <!--</button>-->
+      <img style="margin-left: -65px;width: 20px;position: absolute;margin-top: -27px;"  src="./assets/phone-call.png">
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content class="animated fadeIn common-bg">
   <!--list menu on the top-->
+  <img src="./assets/programme_freq_sfax-640x190.jpg" style=" margin-bottom: -3px; ">
   <div class="booking-card">
     <ion-grid class="card" col-md-8 col-lg-6>
 
-        <ion-col class="no-padding">
+        <ion-col class="no-padding" style=" margin-top: -7px; padding: 0px; ">
           <ion-searchbar [(ngModel)]="hotellocation" (ionInput)="getItems($event)" (ionCancel)="showItems = !showItems" autocomplete="on" autocorrect="on" spellcheck="true" animated="true" placeholder="Recherche...."></ion-searchbar>
           <ion-list class="searchbar-results animated fadeIn" *ngIf="showItems">
             <button ion-item *ngFor="let item of items" tappable (click)="itemSelected(item)">
@@ -34,12 +36,12 @@
           </ion-list>
         </ion-col>
 
-      <ion-row style=" margin-top: 45px; ">
+      <ion-row style="margin-top: 45px;">
         <ion-item>
           <h2>Radio Sfax إذاعة صفاقس</h2>
           <p>La radio régionale n°1 de la ville de Sfax</p>
 
-            <img item-end [src]="url" style="width: 45px;" tappable (click)="playStop()">
+          <img item-end [src]="url" style="width: 45px;" tappable (click)="playStop()">
         </ion-item>
 
         <ion-col col-6 class="br bb datetime-btn">
@@ -85,16 +87,32 @@
       </ion-row>
 
       <ion-row>
-        <ion-col>
-          <button ion-button block color="primary" class="round" tappable (click)="interversion()">
-            <ion-icon name="search"></ion-icon>
-            Search
+        <ion-col col-6>
+          <button ion-button block color="primary" class="round" tappable (click)="Music()">
+            <img style=" margin-right: 6px; " src="./assets/heart.png" width="25px;" >
+            Musique
           </button>
         </ion-col>
+        <ion-col col-6>
+          <button ion-button block color="primary" class="round" tappable (click)="dedicas()">
+            <img style=" margin-right: 6px; " src="./assets/picture.png" width="25px;" >
+            Dédicace
+          </button>
+        </ion-col>
+
+      </ion-row>
+
+      <ion-row style=" margin-top: -30px; ">
+        <ion-col >
+          <button ion-button block color="primary" class="round" tappable (click)="interversion()">
+            <img  style=" margin-right: 6px; " src="./assets/picture.png" width="25px;" >
+            intervention
+          </button>
+        </ion-col>
+
       </ion-row>
     </ion-grid>
   </div>
-
 
 
 </ion-content>

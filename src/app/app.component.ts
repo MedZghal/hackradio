@@ -5,14 +5,15 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
-import {AccueilPage} from "../pages/accueil/accueil";
 import {RadioServiceProvider} from "../providers/radio-service/radio-service";
+import {AccueilPage} from "../pages/accueil/accueil";
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
+
   loading: any;
   rootPage: any = AccueilPage;
 
