@@ -21,6 +21,12 @@ import {Base64} from "@ionic-native/base64";
 import {ComponentsModule} from "../components/components.module";
 import {DeduPageModule} from "../pages/dedu/dedu.module";
 import {MediaCapture} from "@ionic-native/media-capture";
+import {SplashPageModule} from "../pages/splash/splash.module";
+import { defaultAudioProviderFactory, IonicAudioModule} from "ionic-audio";
+import {MusiquePageModule} from "../pages/musique/musique.module";
+import {PhotoViewer} from "@ionic-native/photo-viewer";
+import {CallNumber} from "@ionic-native/call-number";
+import { Sim } from '@ionic-native/sim';
 
 @NgModule({
   declarations: [
@@ -36,7 +42,10 @@ import {MediaCapture} from "@ionic-native/media-capture";
     MapPageModule,
     ComponentsModule,
     DeduPageModule,
+    SplashPageModule,
+    MusiquePageModule,
     IonicModule.forRoot(MyApp),
+    IonicAudioModule.forRoot(defaultAudioProviderFactory),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -51,9 +60,12 @@ import {MediaCapture} from "@ionic-native/media-capture";
     Camera,
     Media,
     File,
+    PhotoViewer,
     Geolocation,
     Base64,
     MediaCapture,
+    CallNumber,
+    Sim,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA]

@@ -26,6 +26,7 @@ $colors: (
   green : #78ba24,
   red : #FF2D55,
   brown: #8E8E93,
+  grey: #a1a6bb
 );
 
 // App iOS Variables
@@ -58,3 +59,5 @@ $colors: (
 // --------------------------------------------------
 @import "roboto";
 @import "san-francisco";
+//@import url(https://fonts.googleapis.com/earlyaccess/amiri.css);
+@import url(//fonts.googleapis.com/css?family=Lato);

@@ -1,7 +1,6 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import {Geolocation} from "@ionic-native/geolocation";
-declare var google;
+import L from "leaflet";
 /**
  * Generated class for the MapPage page.
  *
@@ -15,40 +14,55 @@ declare var google;
   templateUrl: 'map.html',
 })
 export class MapPage {
-  @ViewChild('map') mapElement: ElementRef;
-  map: any;
+  map: L.Map;
+  center: L.PointTuple;
+  data :any;
 
-  constructor(public geolocation: Geolocation,public navCtrl: NavController, public navParams: NavParams) {
-    let data =this.navParams.get("Data");
-    this.loadMap();
-    console.log(data);
+
+  constructor(public navCtrl: NavController, public navParams: NavParams) {
+    this.data = this.navParams.get("Data");
 
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad MapPage');
+    this.center = [this.data.latitude,this.data.longitude];
 
+    this.leafletMap();
   }
 
+
+  leafletMap(){
+    this.map = L.map('map', {
+      center: this.center,
+      zoom: 13
+    });
+
+    var positron = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap - ProSYS</a>'
+    }).addTo(this.map);
+
+    var marker = new L.Marker(this.center);
+    this.map.addLayer(marker);
+
+    marker.bindPopup("<p>Intervation par "+this.data.data.Nom+"  "+this.data.data.prenom+"</p>");
+  }
 
   loadMap(){
 
-    this.geolocation.getCurrentPosition().then((position) => {
-        console.log(position);
-      let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-      let mapOptions = {
-        center: latLng,
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-
-    }, (err) => {
-      console.log(err);
-    });
+        this.leafletMap();
+      // let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      //
+      // let mapOptions = {
+      //   center: latLng,
+      //   zoom: 15,
+      //   mapTypeId: google.maps.MapTypeId.ROADMAP
+      // };
+      //
+      // this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
 
   }
+
 }

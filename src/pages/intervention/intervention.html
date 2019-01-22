@@ -12,7 +12,7 @@
     </button>
     <ion-title>
       <div ion-text class="icon-title"></div>
-      <span class="text-primary"><strong>Interaction</strong></span>
+      <span class="text-primary"><strong> Intervention </strong></span>
     </ion-title>
     <ion-buttons  end>
 
@@ -28,65 +28,96 @@
 
 
 
-<ion-content padding>
-  <form [formGroup]="data"  method="post" enctype="multipart/*" (ngSubmit)="logForm()">
-    <ion-list>
-    <ion-item>
-      <ion-label color="primary" floating>Nom de l'auditeur </ion-label>
-      <ion-input type="text"  formControlName="Nom" ></ion-input>
-    </ion-item>
+<ion-content padding  >
 
-    <ion-item>
-      <ion-label color="primary" floating>Prénom de l'auditeur </ion-label>
-      <ion-input type="text" formControlName="prenom"></ion-input>
-    </ion-item>
+    <form [formGroup]="data"  method="post"  >
+
+        <ion-list>
 
       <ion-item>
-        <ion-label color="primary" floating> Description </ion-label>
-        <ion-textarea formControlName="description"></ion-textarea>
+        <ion-label color="primary" floating>Nom de l'auditeur </ion-label>
+        <ion-input type="text"  formControlName="Nom" ></ion-input>
       </ion-item>
 
-    <ion-item >
-
-      <ion-item *ngIf="error">
-        <strong>{{error}}</strong>
-      </ion-item>
-        <img  style="width: 40px;"  src="./assets/small-logo-sfax.png" alt="" >
-        <img  *ngFor="let im of Imgs" style="width: 40px;"  [src]="im" alt="" >
+      <ion-item>
+        <ion-label color="primary" floating>Prénom de l'auditeur </ion-label>
+        <ion-input type="text" formControlName="prenom"></ion-input>
       </ion-item>
 
-    <ion-item >
+        <ion-item>
+          <ion-label color="primary" floating> Description </ion-label>
+          <ion-textarea formControlName="description"></ion-textarea>
+        </ion-item>
 
-      <div class="col-xs-12">
 
-        <ion-card>
-          <ion-card-content>
-            <ion-card-title style="margin-left: 12%;">
-              <!--<button style="width: 70px;"  *ngIf="recording">-->
-                <!--<img   src="../../assets/microphone-voice-tool-circular-black-button%20(1).png" >-->
-              <!--</button>-->
-              <!--<button style="width: 70px;"   *ngIf="!recording">-->
-                <!--<img src="../../assets/microphone-voice-tool-circular-black-button.png"  >-->
-              <!--</button>-->
 
-              <button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Arrêtez <br> l'enregistrement </button>
-              <button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Commencer <br> l'enregistrement </button>
+        <ion-item *ngIf="error">
+          <strong>{{error}}</strong>
+        </ion-item>
+        <ion-item >
+          <img  style="width: 80px;"  src="./assets/small-logo-sfax_.png" alt="" >
 
-            </ion-card-title>
+        </ion-item>
+        <ion-item *ngIf="Imgs.length > 0">
+          <ion-scroll scrollX="true"  >
+            <div  *ngFor="let im of Imgs" class="Img" >
+              <button class="deletebtI" (click)="presentConfirm(im,'img')" end   ><ion-icon ios="ios-trash" md="md-trash"></ion-icon></button>
+              <img style="width: 60px;position: relative;"  [src]="im" alt="" (click)="ViewImg(im)" >
+            </div>
+          </ion-scroll>
+        </ion-item>
+        <ion-item *ngIf="Videos.length > 0">
+          <div *ngFor="let v of Videos">
+            <br>
+            <button class="deletebt" (click)="presentConfirm(v,'video')" end><ion-icon ios="ios-trash" md="md-trash"></ion-icon></button>
+            <video controls="controls" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline" class="videoPlayer">
+              <source [src]="v" type="video/mp4" />
+            </video>
+
+          </div>
+        </ion-item>
+
+
+
+
+
+
+          <ion-card style=" margin-bottom: 10px; ">
+            <ion-card-content>
+              <ion-card-title class="CenterDiv">
+                <img (click)="stopRecord()" *ngIf="recording" src="./assets/microphone-voice-tool-circular-black-button.png" style="width: 70px;" alt="">
+                <img (click)="startRecord()" *ngIf="!recording" src="./assets/microphone-voice-tool-circular-black-button%20(1).png" style="width: 70px;" alt="" >
+
+              </ion-card-title>
+
+              <ion-list *ngIf="audioList.length > 0">
+                <ion-list-header>
+                  Enregistrement audio :
+                </ion-list-header>
+                <ion-item  *ngFor="let audio of audioList; index as i;">
+                  <button class="deletebtA" ion-button item-end clear (click)="presentConfirm(audio.filename,'audio')" ><ion-icon class="btMin" ios="ios-trash" md="md-trash"></ion-icon></button>
+                  <button class="BTPlay" ion-button item-end clear (click)="playAudio(audio.filename, i)"><ion-icon class="btMin" name="play" ></ion-icon></button>
+                  <!--<ion-thumbnail  item-start>-->
+                    <!--<img style="width: 50px;height: 50px" src="../../assets/microphone-voice-tool-circular-black-button%20(1).png" alt="">-->
+                  <!--</ion-thumbnail>-->
+                  <h2>{{audio.filename}}</h2>
+
+                </ion-item>
+            </ion-list>
 
           </ion-card-content>
         </ion-card>
-        <ion-list>
-          <ion-item *ngFor="let audio of audioList; index as i;">
-            <p>{{audio.filename}}</p>
-            <button ion-button clear item-end large (click)="playAudio(audio.filename, i)"><ion-icon name="play"></ion-icon></button>
-          </ion-item>
-        </ion-list>
-      </div>
-    </ion-item>
+
+
+
+
+
 
   </ion-list>
-    <button ion-button type="submit" block [disabled]="!data.valid">Envoie de l'intervention</button>
+
+        <button ion-button (click)="logForm()" block [disabled]="!data.valid">Envoie de l'intervention</button>
+
+
   </form>
 
 </ion-content>

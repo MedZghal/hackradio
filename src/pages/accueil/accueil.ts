@@ -2,7 +2,10 @@ import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {RadioServiceProvider} from "../../providers/radio-service/radio-service";
 import {InterventionPage} from "../intervention/intervention";
-import {DeduPage} from "../dedu/dedu";
+import { timeout, catchError,filter } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
+import {CallNumber} from "@ionic-native/call-number";
+import {Geolocation, GeolocationOptions, Geoposition} from "@ionic-native/geolocation";
 
 /**
  * Generated class for the AccueilPage page.
@@ -18,6 +21,16 @@ import {DeduPage} from "../dedu/dedu";
 })
 export class AccueilPage {
 
+  latitude :any ;
+  longitude:any;
+  optionsG : GeolocationOptions;
+  slides =[
+    {src :"./assets/imgs/programme_freq_sfax_.jpg",style:'200px;'},
+    {src :"./assets/imgs/13653184_1061028897307531_3920583169487014758_o.jpg",style:'200px;'},
+    {src :"./assets/imgs/النشرة-الصباحية.jpg",style:'200px;'},
+    {src :"./assets/imgs/المجلة-الإخبارية.jpg",style:'200px;'},
+    {src :"./assets/imgs/unnamed.jpg",style:'150px;'}
+  ];
   items = [
     {
       title: ' أحلــــــى صبـــــــــاح ',
@@ -39,19 +52,13 @@ export class AccueilPage {
     }
   ];
 
+  Serveur ="";
   click  ='pause';
   url :any ='./assets/play-button.png';
   dDate: Date = new Date();
-  searchQuery: string = '';
-  showItems: boolean = false;
 
   public map: any;
   public childs: any;
-
-  public hotellocation: string;
-
-  // list of hotels
-  public hotels: any;
 
   // search conditions
   public checkin = {
@@ -64,19 +71,18 @@ export class AccueilPage {
     date: new Date(this.dDate.setDate(this.dDate.getDate() + 1)).toISOString()
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public player: RadioServiceProvider) {
+  constructor(public navCtrl: NavController,
+              public player: RadioServiceProvider,
+              private callNumber: CallNumber,
+              public geolocation: Geolocation) {
+
+
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad AccueilPage');
-    // this.player.get('ViewAllFile').subscribe(
-    //   data => {
-    //     console.log(data);
-    //   },
-    //   err =>{
-    //
-    //   }
-    // )
+    this.getUserPosition();
+    this.Ping();
   }
 
   play(Data) {
@@ -101,10 +107,89 @@ export class AccueilPage {
   }
 
   interversion(){
-    this.navCtrl.push(InterventionPage);
+    // alert(this.latitude+"  --- "+this.longitude);
+    let data  ={
+      latitude :this.latitude ,
+      longitude:this.longitude
+    };
+
+    this.navCtrl.push(InterventionPage,{ Data : data});
   }
 
-  Deducace(){
-    this.navCtrl.push(DeduPage);
+  Music(){
+    // this.navCtrl.push(MusiquePage);
   }
+
+  dedicaces(){
+    // this.navCtrl.push(DeduPage);
+  }
+
+  callJoint(telephoneNumber) {
+    this.callNumber.callNumber(telephoneNumber, true);
+  }
+
+  doRefresh(refresher) {
+    console.log('Begin async operation', refresher);
+    this.Ping();
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      refresher.complete();
+    }, 2000);
+  }
+
+  Ping(){
+
+    this.player.get('ListAnimateurs').pipe(
+      timeout(15000),
+          catchError(e => {
+            // do something on a timeout
+            console.log('timeout'+JSON.stringify(e));
+            this.Serveur ='off';
+            return of(null);
+          })
+      ).subscribe(
+      data => {
+
+        if(data != null){
+          this.Serveur ='on';
+          console.log('on');
+        }else{
+          this.Serveur ='off';
+          console.log('off 1');
+        }
+
+
+      },err =>{
+        console.log(err);
+        this.Serveur ='off';
+        console.log('off 2');
+      }
+    );
+  }
+
+
+
+  getUserPosition(){
+    this.optionsG = {
+      enableHighAccuracy:true
+    };
+
+    this.geolocation.getCurrentPosition(this.optionsG).then((pos : Geoposition) => {
+
+      this.latitude = pos.coords.latitude;
+      this.longitude = pos.coords.longitude;
+
+    },(err : PositionError)=>{
+      console.log("error : " + err.message);
+    });
+
+    let watch = this.geolocation.watchPosition();
+    watch.subscribe((position) => {
+      this.latitude = position.coords.latitude;
+      this.longitude = position.coords.longitude;
+    });
+
+
+  }
+
 }

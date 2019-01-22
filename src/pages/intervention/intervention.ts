@@ -2,24 +2,22 @@ import {Component} from '@angular/core';
 import {
   IonicPage,
   LoadingController,
-  NavController,
-  NavParams,
   Platform,
   PopoverController,
   ToastController,
-  Loading
+  Loading, AlertController, ViewController, NavController, NavParams
 } from 'ionic-angular';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Media, MediaObject } from '@ionic-native/media';
 import {File, FileEntry} from '@ionic-native/file';
-import { Geolocation } from '@ionic-native/geolocation';
+import {GeolocationOptions, Geoposition} from '@ionic-native/geolocation';
 import {MapPage} from "../map/map";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {RadioServiceProvider} from "../../providers/radio-service/radio-service";
 import {HttpClient} from "@angular/common/http";
-import {catchError, finalize} from "rxjs/operators";
 import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
-
+import {PhotoViewer} from "@ionic-native/photo-viewer";
+import { Sim } from '@ionic-native/sim';
 /**
  * Generated class for the InterventionPage page.
  *
@@ -27,6 +25,10 @@ import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ion
  * Ionic pages and navigation.
  */
 
+interface FileUpload {
+  name :any,
+  file :any
+}
 
 @IonicPage()
 @Component({
@@ -36,22 +38,30 @@ import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ion
 export class InterventionPage {
 
   data : FormGroup;
-  public Imgs :any[] =[];
+
 
   public myPhoto: any;
-  public error: string;
+  public error: string = "";
   private loading: Loading;
 
   recording: boolean = false;
   filePath: string;
   fileName: string;
   audio: MediaObject;
-  audioList: any[] = [];
+
+  public Imgs :any[] =[];
+  public Videos :any[] =[];
+  public Audios :any[] =[];
+  public audioList: any[] = [];
+  public FilesUpload: FileUpload[] = [];
 
   latitude :any ;
   longitude:any;
 
   imageURI:any;
+
+  optionsG : GeolocationOptions;
+  currentPos : Geoposition;
 
    options: CameraOptions = {
     quality: 100,
@@ -63,82 +73,103 @@ export class InterventionPage {
   constructor(public http: HttpClient,
               public Service : RadioServiceProvider ,
               private formBuilder: FormBuilder ,
-              public geolocation: Geolocation,
               public platform: Platform,
               private camera: Camera,
-              public navCtrl: NavController,
-              public navParams: NavParams,
+              private sim: Sim,
+              public viewCtrl: ViewController,
               private media: Media,
               private file: File,
+              public navParams: NavParams,
               public popoverCtrl: PopoverController,
               private readonly loadingCtrl: LoadingController,
               private readonly toastCtrl: ToastController,
-              private mediaCapture: MediaCapture) {
+              private mediaCapture: MediaCapture,
+              private alertCtrl: AlertController,
+              private photoViewer: PhotoViewer) {
 
-    this.data = this.formBuilder.group({
-      Nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      description: [''],
-      file: [''],
-    });
 
-    this.geolocation.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
-      // resp.coords.longitude
-      this.latitude = resp.coords.latitude;
-      this.longitude = resp.coords.longitude;
+    let pos = this.navParams.get("Data");
+    this.latitude = pos.latitude;
+    this.longitude = pos.longitude;
 
-    }).catch((error) => {
-      console.log('Error getting location', error);
-    });
+    if(localStorage.getItem("data")) {
+      let data = JSON.parse(localStorage.getItem("data"));
+      console.log(data.Nom);
+      this.data = this.formBuilder.group({
+        Nom: [data.Nom, Validators.required],
+        prenom: [data.prenom, Validators.required],
+        description: [data.description],
+        files: [''],
+      });
+    }else{
+      this.data = this.formBuilder.group({
+        Nom: ['', Validators.required],
+        prenom: ['', Validators.required],
+        description: [''],
+        FilesUpload: [''],
+      });
+    }
+
+
+    // SIM NUMBER
+    this.sim.getSimInfo().then(
+      (info) => console.log('Sim info: ', JSON.stringify(info["phoneNumber"])),
+      (err) => console.log('Unable to get sim info: ', err)
+    );
+
+    this.sim.hasReadPermission().then(
+      (info) => console.log('Has permission: ', info)
+    );
+
+    this.sim.requestReadPermission().then(
+      () => console.log('Permission granted'),
+      () => console.log('Permission denied')
+    );
 
   }
 
 
   ionViewDidLoad() {
 
-
     console.log('ionViewDidLoad InterventionPage');
-    let watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      // data can be a set of coordinates, or an error (if an error occurred).
-      // data.coords.latitude
-      // data.coords.longitude
-      this.latitude = data.coords.latitude;
-      this.longitude = data.coords.longitude;
 
-      console.log(data);
-    });
+    // this.geolocation.getCurrentPosition().then((resp) => {
+    //   // alert(JSON.stringify(resp));
+    //
+    //
+    // }).catch((error) => {
+    //   console.log('Error getting location', JSON.stringify(error));
+    // });
+
   }
 
-  openCamera(){
 
-    this.camera.getPicture(this.options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      let base64Image = "data:image/jpeg;base64," + imageData;
-
-      this.Imgs.push(base64Image);
-
-
-    }, (err) => {
-      // Handle error
-    });
-  }
-
-  getAudioList() {
+  getFiles() {
     if(localStorage.getItem("audiolist")) {
-      this.audioList = JSON.parse(localStorage.getItem("audiolist"));
-      console.log(this.audioList);
+      // this.audioList = JSON.parse(localStorage.getItem("audiolist"));
+      this.audioList = [];
     }
+    if(localStorage.getItem("Imgs")) {
+      this.Imgs = [];
+    }
+    if(localStorage.getItem("Videos")) {
+      this.Videos = [];
+    }
+    if(localStorage.getItem("FilesUpload")) {
+      this.FilesUpload = [];
+    }
+
   }
 
 
   ionViewWillEnter() {
-    this.getAudioList();
+    this.getFiles();
   }
 
 
+  ionViewDidEnter(){
+
+  }
 
 
   startRecord() {
@@ -157,14 +188,20 @@ export class InterventionPage {
 
   stopRecord() {
     this.audio.stopRecord();
-    let data = { filename: this.fileName };
+    let data = {
+      filename: this.fileName,
+      src: 'file://'+(JSON.stringify(this.filePath)).toString().replace(/"/g,''),
+      preload: 'metadata'};
     // this.audioList.push(data);
     this.audioList = [];
     this.audioList.push(data);
-    this.uploadPhoto('file://'+(JSON.stringify(this.filePath)).toString().replace(/"/g,''));
+    this.Audios.push('file://'+(JSON.stringify(this.filePath)).toString().replace(/"/g,''));
+    this.FilesUpload.push({file:'file://'+(JSON.stringify(this.filePath)).toString().replace(/"/g,''),name:''});
+    // this.uploadData('file://'+(JSON.stringify(this.filePath)).toString().replace(/"/g,''));
     localStorage.setItem("audiolist", JSON.stringify(this.audioList));
+    localStorage.setItem("FilesUpload", JSON.stringify(this.FilesUpload));
     this.recording = false;
-    this.getAudioList();
+    // this.getFiles();
   }
 
   playAudio(file,idx) {
@@ -183,43 +220,17 @@ export class InterventionPage {
   callMap(myEvent){
     let data  ={
       latitude :this.latitude ,
-      longitude:this.longitude
+      longitude:this.longitude,
+      data: this.data.value
     };
 
+    // alert(JSON.stringify(data));
     let popover = this.popoverCtrl.create(MapPage,{ Data : data});
     popover.present({
       ev: myEvent
     });
   }
 
-
-  logForm() {
-    console.log(this.data);
-
-
-
-      let postData = {
-        'file': this.data.value.file,
-        'num_patient': 50,
-      };
-
-
-    let reqOpts = {
-      headers: {
-        'Content-Type':'multipart/form-data',
-        'Accept': 'application/json, text/javascript, */*; q=0.01'
-      },
-      withCredentials: true
-    };
-
-      this.http.post("https://medproapp.ddns.net/Clinique/uploadFile", postData, reqOpts)
-        .subscribe(data => {
-          console.log(data['_body']);
-        }, error => {
-          console.log(error);
-        });
-
-  }
 
   takePhoto() {
     this.camera.getPicture({
@@ -229,66 +240,37 @@ export class InterventionPage {
       encodingType: this.camera.EncodingType.JPEG
     }).then((imageData) => {
       this.Imgs.push((<any>window).Ionic.WebView.convertFileSrc(imageData));
-      this.uploadPhoto(imageData);
+      localStorage.setItem("Imgs", JSON.stringify(this.Imgs));
+      this.FilesUpload.push({file:imageData,name:(<any>window).Ionic.WebView.convertFileSrc(imageData)});
+      localStorage.setItem("FilesUpload", JSON.stringify(this.FilesUpload));
+      // this.uploadData(imageData);
     }, error => {
       this.error = JSON.stringify(error);
     });
   }
 
-  private uploadPhoto(imageFileUri: any): void {
-    this.error = null;
-    this.loading = this.loadingCtrl.create({
-      content: 'Uploading...'
-    });
 
-    this.loading.present();
-
-    this.file.resolveLocalFilesystemUrl(imageFileUri)
-      .then(entry => (entry as FileEntry).file(file => this.readFile(file)))
-      .catch(err => console.log(err));
-  }
-
-  private readFile(file: any) {
-    console.log('ok0');
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      console.log('ok1');
-      const formData = new FormData();
-      const imgBlob = new Blob([reader.result], {type: file.type});
-      formData.append('file', imgBlob, file.name);
-      formData.append('num_patient','17000067');
-
-      this.postData(formData);
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-
-  private postData(formData: FormData) {
-    this.http.post<boolean>("https://medproapp.ddns.net/Clinique/uploadFile", formData)
-      .pipe(
-        catchError(e => this.handleError(e)),
-        finalize(() => this.loading.dismiss())
-      )
-      .subscribe((ok : boolean)  => this.showToast(ok));
-  }
 
   playViedo(){
     let options: CaptureImageOptions = { limit: 1 };
     this.mediaCapture.captureVideo(options)
       .then(
         (data: MediaFile[]) => {
-          console.log(data[0].fullPath);
-          this.uploadPhoto(data[0].fullPath);
+          // console.log(data[0].fullPath);
+          this.Videos.push((<any>window).Ionic.WebView.convertFileSrc(data[0].fullPath));
+          localStorage.setItem("Videos", JSON.stringify(this.Videos));
+          this.FilesUpload.push({file:data[0].fullPath,name:(<any>window).Ionic.WebView.convertFileSrc(data[0].fullPath)});
+          localStorage.setItem("FilesUpload", JSON.stringify(this.FilesUpload));
+          // this.uploadData(data[0].fullPath);
           },
             (err: CaptureError) => console.error(err)
       );
   }
 
-  private showToast(ok: boolean) {
+  private showToast(ok: boolean,msg) {
     if (ok) {
       const toast = this.toastCtrl.create({
-        message: 'Upload successful',
+        message: msg,
         duration: 3000,
         position: 'top'
       });
@@ -296,7 +278,7 @@ export class InterventionPage {
     }
     else {
       const toast = this.toastCtrl.create({
-        message: 'Upload failed',
+        message: msg,
         duration: 3000,
         position: 'top'
       });
@@ -310,5 +292,195 @@ export class InterventionPage {
     return errMsg;
   }
 
+  DeleteV(VideoPath){
+    this.Videos.splice(this.Videos.indexOf(VideoPath), 1);
+    const index = this.FilesUpload.findIndex(order => order.name === VideoPath);
+    this.FilesUpload.splice(index, 1);
+    localStorage.setItem("Videos", JSON.stringify(this.Videos));
+    localStorage.setItem("FilesUpload", JSON.stringify(this.FilesUpload));
+  }
+
+  DeleteI(iMGPath){
+    this.Imgs.splice(this.Imgs.indexOf(iMGPath), 1);
+    const index = this.FilesUpload.findIndex(order => order.name === iMGPath);
+    this.FilesUpload.splice(index, 1);
+    localStorage.setItem("Imgs", JSON.stringify(this.Imgs));
+    localStorage.setItem("FilesUpload", JSON.stringify(this.FilesUpload));
+  }
+
+  presentConfirm(path,type) {
+    let alert = this.alertCtrl.create({
+      title: 'Confirmer',
+      message: 'Êtes-vous sûr de la suppression de cette jointure',
+      buttons: [
+        {
+          text: 'Annule',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Valider',
+          handler: () => {
+            if(type == "video") {
+              this.DeleteV(path);
+            }else
+              if(type == "audio"){
+                this.audioList = [];
+                localStorage.setItem("audiolist", JSON.stringify(this.audioList));
+                const index = this.FilesUpload.findIndex(order => order.name === "");
+                this.FilesUpload.splice(index, 1);
+            }else{
+                this.DeleteI(path);
+              }
+
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  ViewImg(path){
+    let found = this.FilesUpload.find(function(element) {
+      return element.name == path;
+    });
+    this.photoViewer.show(found.file);
+
+  }
+
+
+  private uploadData(imageFileUri: any, num_intervention :any): void {
+    this.error = "";
+
+    this.file.resolveLocalFilesystemUrl(imageFileUri)
+      .then(entry => (entry as FileEntry).file(file => this.readFile(file,num_intervention)))
+      .catch(err => console.log(err));
+  }
+
+  private readFile(file: any, num_intervention :any) {
+    console.log('ok0');
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      console.log('ok1');
+      const formData = new FormData();
+      const imgBlob = new Blob([reader.result], {type: file.type});
+      formData.append('file', imgBlob, file.name);
+      formData.append('num_intervention',num_intervention);
+
+      this.postData(formData);
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+
+  private postData(formData: FormData) {
+    this.http.post<boolean>("https://medproapp.ddns.net/RadioBackend/uploadFile", formData)
+      .subscribe((data : any)  =>{
+          console.log("FIN UPLOAD FILE")
+      }
+      , err => {
+          console.log(err);
+        });
+  }
+
+
+  logForm(){
+
+    if(this.data.valid && this.FilesUpload.length >0){
+
+      localStorage.setItem("data", JSON.stringify(this.data.value));
+
+      const formData = new FormData();
+      formData.append('numIntervention','19006');
+      formData.append('nom',this.data.value.Nom);
+      formData.append('prenom',this.data.value.prenom);
+      formData.append('description',this.data.value.description);
+      formData.append('tel','');
+      formData.append('localisationActuel','latitude:'+this.latitude + ',longitude:'+this.longitude);
+      formData.append('localisationImage','');
+      formData.append('type','En COURS');
+      formData.append('etat','0');
+
+
+      this.loading = this.loadingCtrl.create({
+        content: 'Uploading...'
+      });
+
+      this.loading.present();
+
+
+
+      this.Service.post("AjouterInterv",formData)
+        .subscribe((data : any)  => {
+          console.log(data.numIntervention);
+
+          let IndexUploadFin = this.FilesUpload.length;
+          for(let f in this.FilesUpload){
+
+            //........................****/
+            this.error = "";
+
+            this.file.resolveLocalFilesystemUrl(this.FilesUpload[f].file)
+              .then(entry => (entry as FileEntry).file(
+                file =>{
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    const formData = new FormData();
+                    const imgBlob = new Blob([reader.result], {type: file.type});
+                    formData.append('file', imgBlob, file.name);
+                    formData.append('num_intervention',data.numIntervention);
+
+                    this.Service.post("uploadFile", formData)
+                      .subscribe((data : any)  =>{
+                          IndexUploadFin--;
+                          console.log("FIN UPLOAD FILE "+IndexUploadFin);
+
+                          if(IndexUploadFin === 0){
+                            this.loading.dismiss();
+                            this.viewCtrl.dismiss();
+                            this.showAlert('Intervention envoyer avec succces');
+                          }
+                        }
+                        , err => {
+                          console.log(err);
+                          return;
+                        });
+                  };
+                  reader.readAsArrayBuffer(file);
+                } )
+              ).catch(
+                err => this.handleError(err));
+
+
+          }
+
+
+          this.Imgs =[];
+          this.audioList =[];
+          this.Videos =[];
+          this.FilesUpload=[];
+
+          // if(IndexUploadFin === 0){
+          //   this.loading.dismiss();
+          //   this.showAlert('Intervention envoyer avec succces !');
+          // }
+
+        },
+            e => this.handleError(e));
+    }else
+      this.showToast(true,'il faut ajouter au moins une jointure!');
+  }
+
+
+  showAlert(msg) {
+    const alert = this.alertCtrl.create({
+      title: 'Message!',
+      subTitle: msg,
+      buttons: ['OK']
+    });
+    alert.present();
+  }
 
 }

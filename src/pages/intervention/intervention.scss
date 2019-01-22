@@ -1,9 +1,8 @@
 page-intervention ,
-  .video {
+  .videoPlayer {
     box-shadow: 1px 6px 10px 2px rgba(35, 35, 35, 0.62);
-    height: 600px;
-    max-height: 800px;
-    width: 1067px;
+    height: 200px;
+    width: 100%;
   }
 
   .row {
@@ -18,4 +17,61 @@ page-intervention ,
     height: 100%;
   }
 
+ion-scroll {
+  white-space: nowrap;
+  height: 100px;
+}
 
+.deletebt{
+  font-size: 25px;
+  position: absolute;
+  background-color: transparent;
+  right: 0px;
+  z-index: 1;
+  margin-top: -10px;
+}
+
+.deletebtI{
+  font-size: 20px;
+  position: absolute;
+  background-color: transparent;
+  margin-left: 35px;
+  z-index: 1;
+  margin-top: -10px;
+}
+.deletebt ion-icon ,.deletebtI ion-icon ,.deletebtA ion-icon{
+    color: red;
+}
+
+.deletebtA{
+  font-size: 20px;
+  position: absolute;
+  //background-color: transparent;
+  margin-left: 35px;
+  right: 10px;
+  top: -5px;
+}
+
+.Img{
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.BTPlay{
+  font-size: 20px;
+  position: absolute;
+  //background-color: transparent;
+  right: -25px;
+  top: -5px;
+}
+
+.btMin{
+  font-size: 25px
+}
+
+.CenterDiv{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

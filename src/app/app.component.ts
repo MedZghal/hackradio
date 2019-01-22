@@ -6,7 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import {RadioServiceProvider} from "../providers/radio-service/radio-service";
-import {AccueilPage} from "../pages/accueil/accueil";
+import {SplashPage} from "../pages/splash/splash";
 
 @Component({
   templateUrl: 'app.html'
@@ -15,7 +15,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   loading: any;
-  rootPage: any = AccueilPage;
+  rootPage: any = SplashPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -37,6 +37,7 @@ export class MyApp {
       this.playEvents();
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
     });
   }
 

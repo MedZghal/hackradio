@@ -1,19 +1,51 @@
-<ion-menu [content]="content">
+<ion-menu side="left" id="authenticated" [content]="content">
   <ion-header>
-    <ion-toolbar>
-      <ion-title>Menu</ion-title>
+    <ion-toolbar class="user-profile" no-padding>
+
+      <ion-list no-margin>
+        <ion-item style="background-color: #78ba24;text-align: -webkit-center;opacity: 0.9;">
+          <ion-avatar item-start>
+            <img src="./assets/logo.png">
+          </ion-avatar>
+          <h2 class="bold">Radio Sfax <br> إذاعة صفاقس</h2>
+          <h3 ion-text color="secondary">La radio régionale n°1 <br>de la ville de Sfax</h3>
+          <img item-end src="./assets/play-button.png" style="width: 45px;" tappable >
+        </ion-item>
+      </ion-list>
+
+      <ion-grid no-padding>
+            <img src="../assets/bloggif_572a564c32bce1.gif" alt="">
+      </ion-grid>
+
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
-    <ion-list>
-      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
-        {{p.title}}
+  <ion-content color="primary">
+
+    <ion-list class="user-list">
+      <button ion-item class="text-1x">
+        <ion-icon name="briefcase" color="primary"></ion-icon>
+        <span ion-text color="primary">Accueil</span>
+      </button>
+      <button ion-item class="text-1x">
+        <ion-icon name="chatbubbles" color="primary"></ion-icon>
+        <span ion-text color="primary">Intervention</span>
+      </button>
+      <button ion-item class="text-1x">
+        <ion-icon name="volume-mute" color="primary"></ion-icon>
+        <span ion-text color="primary">Dédicace</span>
+      </button>
+      <button ion-item class="text-1x">
+        <ion-icon name="heart" color="primary"></ion-icon>
+        <span ion-text color="primary">Musique</span>
+      </button>
+      <button ion-item class="text-1x">
+        <ion-icon name="help-buoy" color="primary"></ion-icon>
+        <span ion-text color="primary">A propos</span>
       </button>
     </ion-list>
   </ion-content>
 
 </ion-menu>
 
-<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

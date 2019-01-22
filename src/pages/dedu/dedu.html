@@ -11,14 +11,14 @@
     </button>
     <ion-title>
       <div ion-text class="icon-title"></div>
-      <span class="text-primary"><strong>Interaction</strong></span>
+      <span class="text-primary"><strong>Dédicace</strong></span>
     </ion-title>
     <ion-buttons style=" margin-right: 14px; " end>
 
       <!--<button style="font-size: 25px;"  ion-button clear item-end large (click)="callMap($event)"><ion-icon name="locate"></ion-icon></button>-->
       <!--<button style="font-size: 25px;"  ion-button dark item-end (click)="openCamera()"> <ion-icon name="camera"></ion-icon></button>-->
-      <img  style= "width: 20px; position: absolute; margin-top: 2px; margin-left: -30px; " src="./assets/place.png" item-end (click)="callMap($event)" alt="" >
-      <img style=" margin-right: 13px;     margin-left: 3px;" src="./assets/photo-camera.png" item-end (click)="openCamera()"  alt="">
+      <!--<img  style= "width: 25px; position: absolute; margin-top: 2px; margin-left: -30px; " src="./assets/place.png" item-end (click)="callMap($event)" alt="" >-->
+      <img style=" margin-right: 13px;  width: 25px;   margin-left: 3px;" src="./assets/photo-camera.png" item-end  alt="">
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -57,10 +57,8 @@
           <ion-card>
             <ion-card-content>
               <ion-card-title>
-                <img (click)="stopRecord()" *ngIf="recording" src="./assets/microphone-voice-tool-circular-black-button (1).png" style="margin-left: 34%;width: 70px;">
-                <img (click)="startRecord()" *ngIf="!recording" src="./assets/microphone-voice-tool-circular-black-button (1).png" style="margin-left: 34%;width: 70px;"  >
-                <!--<button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>-->
-                <!--<button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>-->
+                <img (click)="stopRecord()" *ngIf="recording" src="../../assets/microphone-voice-tool-circular-black-button.png" style="margin-left: 34%;width: 70px;" alt="">
+                <img (click)="startRecord()" *ngIf="!recording" src="../../assets/microphone-voice-tool-circular-black-button%20(1).png" style="margin-left: 34%;width: 70px;" alt="" >
 
               </ion-card-title>
 
@@ -76,6 +74,6 @@
       </ion-item>
 
     </ion-list>
-    <button ion-button type="submit" block [disabled]="!data.valid">Envoie de l'intervention</button>
+    <button ion-button type="submit" block [disabled]="!data.valid">Envoie le Dédicace</button>
   </form>
 </ion-content>

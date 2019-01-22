@@ -32,6 +32,11 @@
 //  Background Sizes
 //  Default Overview Ionic
 //////////////////////////////////////////////////
+
+//spinner
+$refresher-icon-color : #78ba24;
+
+
 // Size Avatar
 $item-md-avatar-size: 72px;
 $item-ios-avatar-size: 72px;
@@ -191,8 +196,8 @@ $border-radius: 8px;
 // Black&White Avatar and Image
 ion-avatar,
 ion-thumbnail {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
+    //-webkit-filter: grayscale(100%);
+    //filter: grayscale(100%);
     opacity: 0.7;
 }
 

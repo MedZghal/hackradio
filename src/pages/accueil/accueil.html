@@ -9,82 +9,70 @@
       <span class="text-primary">adio<strong>Sfax</strong></span>
     </ion-title>
     <ion-buttons end>
-      <button style="font-size: 20px" ion-button tappable (click)="presentNotifications($event)" color="primary">
+
+      <button style="font-size: 20px;margin-right: -10px;" ion-button tappable (click)="callJoint('74240262')" color="primary" >
+        <ion-icon ios="ios-call" md="md-call"></ion-icon>
+      </button>
+
+      <button style="font-size: 20px" ion-button tappable  color="primary">
         <ion-icon name="notifications"></ion-icon>
       </button>
-      <!--<button style="font-size: 20px" ion-button tappable (click)="goToAccount()" color="primary">-->
-        <!--<ion-icon name="cog"></ion-icon>-->
-      <!--</button>-->
-      <img style="margin-left: -65px;width: 20px;position: absolute;margin-top: -27px;"  src="./assets/phone-call.png">
+        <button *ngIf="Serveur ==='on'"  ion-button tappable  color="primary"><img src="./assets/imgs/iconfinder_server_accept_103334.png" alt="" style="width: 20px;float: left;"></button>
+        <button *ngIf="Serveur ==='off'" ion-button tappable  color="red"><img  src="./assets/imgs/iconfinder_server_cancel_103336.png" alt="" style="width: 20px;float: left;"></button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content class="animated fadeIn common-bg">
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Tirer pour rafraîchir"
+      refreshingSpinner="circles"
+      refreshingText="Chargement...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <!--list menu on the top-->
-  <img src="./assets/programme_freq_sfax-640x190.jpg" style=" margin-bottom: -3px; ">
+  <ion-slides pager="true" class="silde">
+    <ion-slide *ngFor="let slide of slides">
+      <img [src]="slide.src" alt="" >
+    </ion-slide>
+  </ion-slides>
+
   <div class="booking-card">
-    <ion-grid class="card" col-md-8 col-lg-6>
+    <ion-grid class="card" col-md-12 col-lg-12 col-sm-12 >
 
         <ion-col class="no-padding" style=" margin-top: -7px; padding: 0px; ">
-          <ion-searchbar [(ngModel)]="hotellocation" (ionInput)="getItems($event)" (ionCancel)="showItems = !showItems" autocomplete="on" autocorrect="on" spellcheck="true" animated="true" placeholder="Recherche...."></ion-searchbar>
-          <ion-list class="searchbar-results animated fadeIn" *ngIf="showItems">
-            <button ion-item *ngFor="let item of items" tappable (click)="itemSelected(item)">
-              <ion-icon name="pin"></ion-icon>
-              {{ item }}
+          <ion-searchbar  autocomplete="on" autocorrect="on" spellcheck="true" animated="true" placeholder="Recherche...."></ion-searchbar>
+
+        </ion-col>
+
+      <ion-card style="margin-top: 55px;">
+
+        <ion-card-content>
+
+            <div ion-text class="icon-title"></div>
+            <span class="text-primary">adio<strong>Sfax</strong></span>
+            <b class="titleLive"  >إذاعة صفاقس</b>
+
+          <hr>
+            <ion-row style="margin-bottom: -15px">
+              <ion-col col-6>
+            <p>La radio régionale n°1 de la ville de Sfax</p>
+              </ion-col>
+            <ion-col col-6>
+            <button ion-button block color="primary" class="round" (click)="playStop()">
+              <img item-end [src]="url" class="play" tappable >
+              البث الحي
             </button>
-          </ion-list>
-        </ion-col>
+            </ion-col>
+            </ion-row>
 
-      <ion-row style="margin-top: 45px;">
-        <ion-item>
-          <h2>Radio Sfax إذاعة صفاقس</h2>
-          <p>La radio régionale n°1 de la ville de Sfax</p>
+        </ion-card-content>
 
-          <img item-end [src]="url" style="width: 45px;" tappable (click)="playStop()">
-        </ion-item>
+      </ion-card>
 
-        <ion-col col-6 class="br bb datetime-btn">
-          <ion-icon name="md-calendar" item-left></ion-icon>
-          <ion-datetime class="text-primary" displayFormat="DDD, MMM, DD" pickerFormat="DD/MM/YYYY" [(ngModel)]="checkin.date"></ion-datetime>
-        </ion-col>
-
-        <ion-col col-6 class="bb datetime-btn">
-          <ion-icon name="md-calendar" item-left></ion-icon>
-          <ion-datetime class="text-primary" displayFormat="DDD, MMM, DD" pickerFormat="DD/MM/YYYY" [(ngModel)]="checkout.date"></ion-datetime>
-        </ion-col>
-      </ion-row>
-
-      <ion-row *ngIf="children > 0">
-        <ion-col col-12 class="no-paddingT no-paddingB">
-          <p ion-text color="primary" class="bold" *ngIf="children == 1">Child's age</p>
-          <p ion-text color="primary" class="bold" *ngIf="children > 1">Children's ages</p>
-        </ion-col>
-        <ion-col col-6 col-md-4 class="no-paddingT no-paddingB" *ngFor="let child of childs; let i = index">
-          <div class="guests bb">
-            <ion-item>
-              <ion-label>Child {{ i + 1 }}</ion-label>
-              <ion-select cancelText="Cancel" okText="OK">
-                <ion-option value="0" selected="true">0</ion-option>
-                <ion-option value="1">1</ion-option>
-                <ion-option value="2">2</ion-option>
-                <ion-option value="3">3</ion-option>
-                <ion-option value="4">4</ion-option>
-                <ion-option value="5">5</ion-option>
-                <ion-option value="6">6</ion-option>
-                <ion-option value="7">7</ion-option>
-                <ion-option value="8">8</ion-option>
-                <ion-option value="9">9</ion-option>
-                <ion-option value="10">10</ion-option>
-                <ion-option value="11">11</ion-option>
-                <ion-option value="12">12</ion-option>
-                <ion-option value="13">13</ion-option>
-                <ion-option value="14">14</ion-option>
-              </ion-select>
-            </ion-item>
-          </div>
-        </ion-col>
-      </ion-row>
 
       <ion-row>
         <ion-col col-6>
@@ -94,7 +82,7 @@
           </button>
         </ion-col>
         <ion-col col-6>
-          <button ion-button block color="primary" class="round" tappable (click)="dedicas()">
+          <button ion-button block color="primary" class="round" tappable (click)="dedicaces()">
             <img style=" margin-right: 6px; " src="./assets/picture.png" width="25px;" >
             Dédicace
           </button>
@@ -104,7 +92,7 @@
 
       <ion-row style=" margin-top: -30px; ">
         <ion-col >
-          <button ion-button block color="primary" class="round" tappable (click)="interversion()">
+          <button [disabled]="Serveur != 'on'"  ion-button block color="primary" class="round" tappable (click)="interversion()">
             <img  style=" margin-right: 6px; " src="./assets/picture.png" width="25px;" >
             intervention
           </button>
@@ -112,6 +100,31 @@
 
       </ion-row>
     </ion-grid>
+
+    <hr class="secondary-bg quarter-op">
+    <ion-item-group class="home-widget">
+      <ion-item-divider color="primary">
+        <h2 ion-text class="bold text-white" style="float: right;">
+          فيديو
+
+          <ion-icon name="pricetags"></ion-icon>
+        </h2>
+      </ion-item-divider>
+      <ion-item >
+        <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fradiosfax%2Fvideos%2F353993178740151%2F&amp;show_text=0&amp;width=560" width="100%" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false"></iframe>
+      </ion-item>
+      <ion-item >
+        <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fradiosfax%2Fvideos%2F661259380941972%2F&amp;show_text=0&amp;width=560" width="100%" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false"></iframe>
+      </ion-item>
+      <ion-item >
+        <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fradiosfax%2Fvideos%2F588869904843286%2F&amp;show_text=0&amp;width=560" width="100%" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false"></iframe>
+      </ion-item>
+      <ion-item >
+        <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fradiosfax%2Fvideos%2F1731690186908062%2F&amp;show_text=0&amp;width=560" width="100%" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="false"></iframe>
+      </ion-item>
+
+    </ion-item-group>
+
   </div>
 
 

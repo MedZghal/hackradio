@@ -11,7 +11,9 @@ import {Events} from "ionic-angular";
 @Injectable()
 export class RadioServiceProvider {
 
-  url: string = 'http://192.168.43.19:8187/Radio';
+
+  // url: string = 'https://radioservice.herokuapp.com';
+  url: string = 'https://medproapp.ddns.net/RadioBackend';
   promise: any;
   stream: any = null;
   loading: any;
